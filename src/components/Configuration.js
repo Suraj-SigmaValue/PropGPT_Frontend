@@ -28,9 +28,12 @@ const Configuration = () => {
     } = useApp();
 
     const [loading, setLoading] = useState(false);
+    const [searchTerm, setSearchTerm] = useState('');
 
     // Load items when comparison type changes
     useEffect(() => {
+        setSelectedItems([]); // Clear selection when type changes
+        setSearchTerm(''); // Clear search when type changes
         const loadItems = async () => {
             setLoading(true);
             try {
@@ -43,7 +46,7 @@ const Configuration = () => {
             }
         };
         loadItems();
-    }, [comparisonType, setAvailableItems]);
+    }, [comparisonType, setAvailableItems, setSelectedItems]);
 
     const handleClearCache = async () => {
         try {
@@ -78,6 +81,8 @@ const Configuration = () => {
                     value={comparisonType}
                     onChange={(e) => {
                         setComparisonType(e.target.value);
+                        setSelectedItems([]);
+                        setSearchTerm('');
                         clearChat();
                     }}
                 >
@@ -113,32 +118,43 @@ const Configuration = () => {
             {/* Items Selection */}
             <div className="config-section">
                 <label>Select {comparisonType}s</label>
+                <div style={{ marginBottom: '0.75rem' }}>
+                    <input
+                        type="text"
+                        placeholder={`Search ${comparisonType}...`}
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="search-input"
+                    />
+                </div>
                 {loading ? (
                     <p>Loading...</p>
                 ) : (
                     <div className="multi-select-dropdown">
-                        {availableItems.map(item => (
-                            <div key={item} className="checkbox-item">
-                                <input
-                                    type="checkbox"
-                                    id={`item-${item}`}
-                                    checked={selectedItems.includes(item)}
-                                    onChange={(e) => {
-                                        if (e.target.checked) {
-                                            if (selectedItems.length < 5) {
-                                                setSelectedItems([...selectedItems, item]);
+                        {availableItems
+                            .filter(item => item.toLowerCase().includes(searchTerm.toLowerCase()))
+                            .map(item => (
+                                <div key={item} className="checkbox-item">
+                                    <input
+                                        type="checkbox"
+                                        id={`item-${item}`}
+                                        checked={selectedItems.includes(item)}
+                                        onChange={(e) => {
+                                            if (e.target.checked) {
+                                                if (selectedItems.length < 5) {
+                                                    setSelectedItems([...selectedItems, item]);
+                                                } else {
+                                                    alert('Maximum 5 items can be selected');
+                                                }
                                             } else {
-                                                alert('Maximum 5 items can be selected');
+                                                setSelectedItems(selectedItems.filter(i => i !== item));
                                             }
-                                        } else {
-                                            setSelectedItems(selectedItems.filter(i => i !== item));
-                                        }
-                                    }}
-                                    disabled={!selectedItems.includes(item) && selectedItems.length >= 5}
-                                />
-                                <label htmlFor={`item-${item}`}>{item}</label>
-                            </div>
-                        ))}
+                                        }}
+                                        disabled={!selectedItems.includes(item) && selectedItems.length >= 5}
+                                    />
+                                    <label htmlFor={`item-${item}`}>{item}</label>
+                                </div>
+                            ))}
                     </div>
                 )}
                 <small>{selectedItems.length} / 5 selected</small>
