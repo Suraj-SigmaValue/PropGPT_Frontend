@@ -9,6 +9,7 @@ import { executeQuery } from '../api/endpoints';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import FeedbackButtons from './FeedbackButtons';
+import GraphDisplay from './GraphDisplay';
 
 const ChatInterface = () => {
     const {
@@ -25,7 +26,10 @@ const ChatInterface = () => {
     } = useApp();
 
     const [inputValue, setInputValue] = useState('');
+    const [estimatedTime, setEstimatedTime] = useState(0);
+    const [countdown, setCountdown] = useState(0);
     const messagesEndRef = useRef(null);
+    const countdownIntervalRef = useRef(null);
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -70,6 +74,22 @@ const ChatInterface = () => {
         setLoading(true);
         setError(null);
 
+        // Estimate time based on items and categories (rough estimate)
+        const estimatedSeconds = 5 + (selectedItems.length * 2) + (selectedCategories.length * 1);
+        setEstimatedTime(estimatedSeconds);
+        setCountdown(estimatedSeconds);
+
+        // Start countdown
+        countdownIntervalRef.current = setInterval(() => {
+            setCountdown(prev => {
+                if (prev <= 1) {
+                    clearInterval(countdownIntervalRef.current);
+                    return 0;
+                }
+                return prev - 1;
+            });
+        }, 1000);
+
         try {
             const response = await executeQuery(requestData);
             const data = response.data;
@@ -88,6 +108,11 @@ const ChatInterface = () => {
             addMessage('error', error.response?.data?.error || 'An error occurred while processing your query.');
         } finally {
             setLoading(false);
+            setEstimatedTime(0);
+            setCountdown(0);
+            if (countdownIntervalRef.current) {
+                clearInterval(countdownIntervalRef.current);
+            }
         }
     };
 
@@ -114,6 +139,8 @@ const ChatInterface = () => {
                                     <ReactMarkdown remarkPlugins={[remarkGfm]}>
                                         {message.content}
                                     </ReactMarkdown>
+
+                                    <GraphDisplay content={message.content} />
 
                                     {message.metadata && (
                                         <>
@@ -185,6 +212,11 @@ const ChatInterface = () => {
                         <div className="message-content">
                             <div className="loading-indicator">
                                 <span className="dots">Analyzing</span>
+                                {estimatedTime > 0 && (
+                                    <div className="estimated-time">
+                                        <small>Estimated time: ~{countdown}s</small>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>
