@@ -118,6 +118,25 @@ const Configuration = () => {
             {/* Items Selection */}
             <div className="config-section">
                 <label>Select {comparisonType}s</label>
+
+                {/* Selected Items Chips */}
+                {selectedItems.length > 0 && (
+                    <div className="selected-items-container">
+                        {selectedItems.map(item => (
+                            <div key={item} className="selected-item-tag">
+                                <span>{item}</span>
+                                <span
+                                    className="remove-tag"
+                                    onClick={() => setSelectedItems(selectedItems.filter(i => i !== item))}
+                                    title="Remove"
+                                >
+                                    &times;
+                                </span>
+                            </div>
+                        ))}
+                    </div>
+                )}
+
                 <div style={{ marginBottom: '0.75rem' }}>
                     <input
                         type="text"
