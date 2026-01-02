@@ -10,7 +10,7 @@ import ChatInterface from './components/ChatInterface';
 import { getCacheStats } from './api/endpoints';
 
 function App() {
-    const { setCacheStats, setError } = useApp();
+    const { setCacheStats } = useApp();
 
     // Load cache stats on mount
     useEffect(() => {

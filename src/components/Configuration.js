@@ -5,7 +5,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useApp } from '../context/AppContext';
-import { getComparisonItems, getCacheStats, clearCache } from '../api/endpoints';
+import { getComparisonItems, getCacheStats, clearCache, getCategories } from '../api/endpoints';
 
 const Configuration = () => {
     const {
@@ -15,6 +15,8 @@ const Configuration = () => {
         setSelectedItems,
         selectedCategories,
         setSelectedCategories,
+        selectedYears,
+        setSelectedYears,
         mappingLLMProvider,
         setMappingLLMProvider,
         responseLLMProvider,
@@ -29,6 +31,7 @@ const Configuration = () => {
 
     const [loading, setLoading] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
+    const [categories, setCategories] = useState([]);
 
     // Load items when comparison type changes
     useEffect(() => {
@@ -48,6 +51,28 @@ const Configuration = () => {
         loadItems();
     }, [comparisonType, setAvailableItems, setSelectedItems]);
 
+    // Load categories based on comparison type
+    useEffect(() => {
+        const loadCategories = async () => {
+            try {
+                const response = await getCategories(comparisonType);
+                const fetchedCategories = response.data.categories || [];
+
+                // Capitalize first letter of each category for display
+                const formattedCategories = fetchedCategories.map(cat =>
+                    cat.charAt(0).toUpperCase() + cat.slice(1)
+                );
+
+                setCategories(formattedCategories);
+            } catch (error) {
+                console.error('Failed to load categories:', error);
+                // Fallback to default categories if API fails
+                setCategories(['All', 'Supply', 'Demand', 'Price', 'Demographics']);
+            }
+        };
+        loadCategories();
+    }, [comparisonType]); // Reload categories when comparison type changes
+
     const handleClearCache = async () => {
         try {
             await clearCache();
@@ -59,13 +84,7 @@ const Configuration = () => {
         }
     };
 
-    const categories = [
-        'Supply',
-        'Demand',
-        'Price',
-        'Demographics',
-        'General'
-    ];
+
 
     return (
         <div className="configuration-sidebar">
@@ -200,6 +219,30 @@ const Configuration = () => {
                     </div>
                 ))}
             </div>
+
+            {/* Year Filter - Only show for Location and City, not for Project */}
+            {comparisonType.toLowerCase() !== 'project' && (
+                <div className="config-section">
+                    <label>Select Years</label>
+                    {[2020, 2021, 2022, 2023, 2024].map(year => (
+                        <div key={year} className="checkbox-item">
+                            <input
+                                type="checkbox"
+                                id={`year-${year}`}
+                                checked={selectedYears.includes(year)}
+                                onChange={(e) => {
+                                    if (e.target.checked) {
+                                        setSelectedYears([...selectedYears, year]);
+                                    } else {
+                                        setSelectedYears(selectedYears.filter(y => y !== year));
+                                    }
+                                }}
+                            />
+                            <label htmlFor={`year-${year}`}>{year}</label>
+                        </div>
+                    ))}
+                </div>
+            )}
 
             {messages.length > 0 && (() => {
                 const lastAssistantMessage = [...messages].reverse().find(m => m.role === 'assistant');

@@ -9,7 +9,7 @@ import { executeQuery } from '../api/endpoints';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import FeedbackButtons from './FeedbackButtons';
-import GraphDisplay from './GraphDisplay';
+// import GraphDisplay from './GraphDisplay';
 
 const ChatInterface = () => {
     const {
@@ -18,6 +18,7 @@ const ChatInterface = () => {
         comparisonType,
         selectedItems,
         selectedCategories,
+        selectedYears,
         mappingLLMProvider,
         responseLLMProvider,
         loading,
@@ -64,11 +65,11 @@ const ChatInterface = () => {
         const requestData = {
             query: userQuery,
             items: selectedItems,
-            categories: selectedCategories,
+            categories: selectedCategories.map(cat => cat.toLowerCase()), // Convert to lowercase for backend
             comparison_type: comparisonType,
             mapping_llm_provider: mappingLLMProvider.toLowerCase().replace(' ', '_'),
             response_llm_provider: responseLLMProvider.toLowerCase().replace(' ', '_'),
-            years: comparisonType.toLowerCase() === 'project' ? null : [2020, 2021, 2022, 2023, 2024],
+            years: comparisonType.toLowerCase() === 'project' ? null : selectedYears,
         };
 
         setLoading(true);
@@ -140,7 +141,7 @@ const ChatInterface = () => {
                                         {message.content}
                                     </ReactMarkdown>
 
-                                    <GraphDisplay content={message.content} />
+                                    {/* <GraphDisplay content={message.content} /> */}
 
                                     {message.metadata && (
                                         <>
@@ -171,11 +172,11 @@ const ChatInterface = () => {
                                                     const requestData = {
                                                         query: originalQuery,
                                                         items: selectedItems,
-                                                        categories: selectedCategories,
+                                                        categories: selectedCategories.map(cat => cat.toLowerCase()),
                                                         comparison_type: comparisonType,
                                                         mapping_llm_provider: mappingLLMProvider.toLowerCase().replace(' ', '_'),
                                                         response_llm_provider: responseLLMProvider.toLowerCase().replace(' ', '_'),
-                                                        years: comparisonType.toLowerCase() === 'project' ? null : [2020, 2021, 2022, 2023, 2024],
+                                                        years: comparisonType.toLowerCase() === 'project' ? null : selectedYears,
                                                         forced_mapping_keys: newKeys
                                                     };
 

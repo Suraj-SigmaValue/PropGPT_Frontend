@@ -23,6 +23,10 @@ export const getProjectRecommendations = () => {
     return apiClient.get('/projects/recommendations/');
 };
 
+export const getCategories = (comparisonType) => {
+    return apiClient.post('/categories/', { comparison_type: comparisonType });
+};
+
 // Agent Endpoints
 export const runPlannerAgent = (query, candidateKeys, llmProvider = 'openai') => {
     return apiClient.post('/agents/planner/', {

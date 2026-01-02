@@ -14,7 +14,8 @@ export const AppProvider = ({ children }) => {
     // Configuration state
     const [comparisonType, setComparisonType] = useState('Location');
     const [selectedItems, setSelectedItems] = useState([]);
-    const [selectedCategories, setSelectedCategories] = useState(['Supply']);
+    const [selectedCategories, setSelectedCategories] = useState(['All']);
+    const [selectedYears, setSelectedYears] = useState([2020, 2021, 2022, 2023, 2024]);
     const [mappingLLMProvider, setMappingLLMProvider] = useState('OpenAI');
     const [responseLLMProvider, setResponseLLMProvider] = useState('OpenAI');
 
@@ -51,6 +52,8 @@ export const AppProvider = ({ children }) => {
         setSelectedItems,
         selectedCategories,
         setSelectedCategories,
+        selectedYears,
+        setSelectedYears,
         mappingLLMProvider,
         setMappingLLMProvider,
         responseLLMProvider,
