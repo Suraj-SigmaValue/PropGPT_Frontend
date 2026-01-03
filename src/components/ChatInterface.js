@@ -5,7 +5,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
-import { executeQuery } from '../api/endpoints';
+import { executeQuery, downloadReport } from '../api/endpoints';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import FeedbackButtons from './FeedbackButtons';
@@ -117,11 +117,46 @@ const ChatInterface = () => {
         }
     };
 
+    const handleDownloadReport = async () => {
+        try {
+            const response = await downloadReport();
+
+            // Create a URL for the blob
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+
+            // Create a temporary link to trigger download
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', 'propgpt_chat_report.pdf'); // Set filename
+
+            // Append to body, click, and cleanup
+            document.body.appendChild(link);
+            link.click();
+
+            // Cleanup
+            link.parentNode.removeChild(link);
+            window.URL.revokeObjectURL(url);
+        } catch (error) {
+            console.error('Download error:', error);
+            alert('Failed to download report. Please ensure there is chat history available.');
+        }
+    };
+
     return (
         <div className="chat-interface">
             <div className="chat-header">
-                <h1>Real Estate Analysis Platform</h1>
-                <p>Advanced AI-powered comparative analysis of real estate metrics</p>
+                <div>
+                    <h1>Real Estate Analysis Platform</h1>
+                    <p>Advanced AI-powered comparative analysis of real estate metrics</p>
+                </div>
+                <button
+                    onClick={handleDownloadReport}
+                    className="btn-secondary"
+                    style={{ marginLeft: 'auto' }}
+                    title="Download Chat Report"
+                >
+                    Download Report 📥
+                </button>
             </div>
 
             <div className="chat-messages">

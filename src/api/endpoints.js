@@ -19,6 +19,12 @@ export const getComparisonItems = (comparisonType) => {
     return apiClient.post('/items/', { comparison_type: comparisonType });
 };
 
+export const downloadReport = () => {
+    return apiClient.get('/download-report/', {
+        responseType: 'blob', // Important for PDF download
+    });
+};
+
 export const getProjectRecommendations = () => {
     return apiClient.get('/projects/recommendations/');
 };
@@ -91,6 +97,7 @@ const api = {
     executeQuery,
     loadMappings,
     getComparisonItems,
+    downloadReport,
     getProjectRecommendations,
     runPlannerAgent,
     runColumnAgent,
