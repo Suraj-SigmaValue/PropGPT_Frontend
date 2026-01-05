@@ -86,7 +86,7 @@ const Configuration = () => {
     };
 
     return (
-        <div className="w-80 h-full flex flex-col border-r border-slate-700 bg-slate-900 overflow-y-auto shrink-0 custom-scrollbar">
+        <div className="w-80 h-full flex flex-col border-r border-slate-700 bg-slate-900/40 backdrop-blur-xl overflow-y-auto shrink-0 custom-scrollbar">
             <div className="p-6 border-b border-slate-700">
                 <h2 className="text-xl font-bold text-white tracking-tight">Configuration</h2>
                 <p className="text-sm text-slate-400 mt-1">Set analysis parameters</p>
@@ -103,7 +103,7 @@ const Configuration = () => {
                         setSearchTerm('');
                         clearChat();
                     }}
-                    className="block w-full rounded-lg border border-slate-700 bg-slate-800 py-2 px-3 text-slate-200 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 sm:text-sm"
+                    className="block w-full rounded-lg border border-slate-700 bg-slate-800/50 backdrop-blur-sm py-2 px-3 text-slate-200 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 sm:text-sm"
                 >
                     <option value="Location">Location</option>
                     <option value="City">City</option>
@@ -118,7 +118,7 @@ const Configuration = () => {
                     <select
                         value={mappingLLMProvider}
                         onChange={(e) => setMappingLLMProvider(e.target.value)}
-                        className="block w-full rounded-lg border border-slate-700 bg-slate-800 py-2 px-3 text-slate-200 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 sm:text-sm"
+                        className="block w-full rounded-lg border border-slate-700 bg-slate-800/50 backdrop-blur-sm py-2 px-3 text-slate-200 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 sm:text-sm"
                     >
                         <option value="OpenAI">OpenAI</option>
                         <option value="Google Gemini">Google Gemini</option>
@@ -129,7 +129,7 @@ const Configuration = () => {
                     <select
                         value={responseLLMProvider}
                         onChange={(e) => setResponseLLMProvider(e.target.value)}
-                        className="block w-full rounded-lg border border-slate-700 bg-slate-800 py-2 px-3 text-slate-200 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 sm:text-sm"
+                        className="block w-full rounded-lg border border-slate-700 bg-slate-800/50 backdrop-blur-sm py-2 px-3 text-slate-200 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 sm:text-sm"
                     >
                         <option value="OpenAI">OpenAI</option>
                         <option value="Google Gemini">Google Gemini</option>
@@ -169,7 +169,7 @@ const Configuration = () => {
                         placeholder={`Search ${comparisonType}...`}
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="block w-full rounded-lg border border-slate-700 bg-slate-800 py-2 pl-10 pr-3 text-slate-200 placeholder-slate-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 sm:text-sm"
+                        className="block w-full rounded-lg border border-slate-700 bg-slate-800/50 backdrop-blur-sm py-2 pl-10 pr-3 text-slate-200 placeholder-slate-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 sm:text-sm"
                     />
                 </div>
                 {loading ? (

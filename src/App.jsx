@@ -9,6 +9,7 @@ import { useApp } from './context/AppContext';
 import Configuration from './components/Configuration';
 import ChatInterface from './components/ChatInterface';
 import { getCacheStats } from './api/endpoints';
+import backgroundImage from './Background_Image/background.jpg';
 
 function App() {
     const { setCacheStats } = useApp();
@@ -31,7 +32,15 @@ function App() {
     }, [setCacheStats]);
 
     return (
-        <div className="flex h-screen w-full bg-slate-900 text-slate-100 overflow-hidden font-sans">
+        <div
+            className="flex h-screen w-full text-slate-100 overflow-hidden font-sans"
+            style={{
+                backgroundImage: `url(${backgroundImage})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                backgroundRepeat: 'no-repeat'
+            }}
+        >
             <Configuration />
             <div className="flex-1 flex flex-col h-full relative min-w-0">
                 <ChatInterface />

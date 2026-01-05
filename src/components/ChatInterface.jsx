@@ -144,9 +144,9 @@ const ChatInterface = () => {
     };
 
     return (
-        <div className="flex flex-col h-full bg-slate-900 overflow-hidden">
+        <div className="flex flex-col h-full bg-transparent overflow-hidden">
             {/* Header */}
-            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-700 bg-slate-900/50 backdrop-blur shrink-0">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-700 bg-slate-900/40 backdrop-blur-md shrink-0">
                 <div>
                     <h1 className="text-lg font-bold text-white tracking-tight">Real Estate Analysis Platform</h1>
                     <p className="text-xs text-slate-400">Advanced AI-powered comparative analysis of real estate metrics</p>
@@ -174,9 +174,9 @@ const ChatInterface = () => {
                         <div className={`
                             relative max-w-[85%] rounded-2xl p-5 shadow-sm
                             ${message.role === 'user'
-                                ? 'bg-blue-600 text-white rounded-tr-sm'
+                                ? 'bg-blue-600/80 backdrop-blur-md text-white rounded-tr-sm'
                                 : message.role === 'assistant'
-                                    ? 'bg-slate-800 text-slate-200 rounded-tl-sm border border-slate-700/50'
+                                    ? 'bg-slate-800/60 backdrop-blur-md text-slate-200 rounded-tl-sm border border-slate-700/50'
                                     : 'bg-red-500/10 text-red-400 border border-red-500/20 w-full max-w-lg mx-auto text-center'
                             }
                         `}>
@@ -290,7 +290,7 @@ const ChatInterface = () => {
             </div>
 
             {/* Input Area */}
-            <div className="p-4 border-t border-slate-800 bg-slate-900 shrink-0">
+            <div className="p-4 border-t border-slate-800 bg-slate-900/40 backdrop-blur-md shrink-0">
                 <form onSubmit={handleSubmit} className="relative max-w-4xl mx-auto">
                     <input
                         type="text"
