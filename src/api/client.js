@@ -5,7 +5,8 @@
 
 import axios from 'axios';
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000/api';
+// Vite uses import.meta.env.VITE_ for environment variables
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
 
 // Helper function to get CSRF token from cookies
 function getCookie(name) {
@@ -41,7 +42,7 @@ apiClient.interceptors.request.use(
                 _t: new Date().getTime(),
             };
         }
-        
+
         // Add CSRF token for POST/PUT/PATCH/DELETE requests
         if (['post', 'put', 'patch', 'delete'].includes(config.method)) {
             const csrfToken = getCookie('csrftoken');
@@ -49,7 +50,7 @@ apiClient.interceptors.request.use(
                 config.headers['X-CSRFToken'] = csrfToken;
             }
         }
-        
+
         return config;
     },
     (error) => {

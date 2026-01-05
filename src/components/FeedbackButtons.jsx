@@ -1,6 +1,7 @@
 /**
  * FeedbackButtons Component
  * HITL thumbs up/down functionality
+ * Updated with Tailwind CSS
  */
 
 import React, { useState } from 'react';
@@ -46,20 +47,20 @@ const FeedbackButtons = ({ query, items, categories, mappingKeys, comparisonType
 
     if (feedback) {
         return (
-            <div className="feedback-submitted">
+            <div className="mt-2 text-xs font-medium text-emerald-400 bg-emerald-400/10 p-2 rounded inline-block border border-emerald-400/20">
                 {feedback === 'up' ? '👍 Thank you!' : '👎 Feedback received'}
             </div>
         );
     }
 
     return (
-        <div className="feedback-buttons">
-            <p>Please rate this answer:</p>
-            <div className="button-group">
+        <div className="mt-4 pt-3 border-t border-slate-700/50">
+            <p className="text-xs text-slate-500 mb-2">Rate this answer:</p>
+            <div className="flex space-x-2">
                 <button
                     onClick={() => handleFeedback('up')}
                     disabled={loading}
-                    className="btn-feedback btn-thumbs-up"
+                    className="p-1.5 rounded-md hover:bg-slate-700/70 text-slate-400 hover:text-emerald-400 transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-400/50"
                     title="Accurate and helpful"
                 >
                     👍
@@ -67,7 +68,7 @@ const FeedbackButtons = ({ query, items, categories, mappingKeys, comparisonType
                 <button
                     onClick={() => handleFeedback('down')}
                     disabled={loading}
-                    className="btn-feedback btn-thumbs-down"
+                    className="p-1.5 rounded-md hover:bg-slate-700/70 text-slate-400 hover:text-red-400 transition-colors focus:outline-none focus:ring-2 focus:ring-red-400/50"
                     title="Inaccurate or wrong mapping"
                 >
                     👎

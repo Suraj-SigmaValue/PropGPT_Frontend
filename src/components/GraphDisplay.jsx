@@ -272,7 +272,7 @@ const GraphDisplay = ({ content }) => {
             legend: {
                 position: 'top',
                 labels: {
-                    color: '#B0B5C2' // var(--text-secondary)
+                    color: '#94a3b8' // text-slate-400
                 }
             },
             title: {
@@ -281,12 +281,12 @@ const GraphDisplay = ({ content }) => {
         },
         scales: {
             y: {
-                ticks: { color: '#B0B5C2' },
-                grid: { color: '#34394F' }
+                ticks: { color: '#94a3b8' },
+                grid: { color: '#334155' } // slate-700
             },
             x: {
-                ticks: { color: '#B0B5C2' },
-                grid: { color: '#34394F' }
+                ticks: { color: '#94a3b8' },
+                grid: { color: '#334155' }
             }
         }
     };
@@ -297,17 +297,17 @@ const GraphDisplay = ({ content }) => {
         plugins: {
             legend: {
                 position: 'top',
-                labels: { color: '#B0B5C2' }
+                labels: { color: '#94a3b8' }
             }
         },
         scales: {
             y: {
-                ticks: { color: '#B0B5C2' },
-                grid: { color: '#34394F' }
+                ticks: { color: '#94a3b8' },
+                grid: { color: '#334155' }
             },
             x: {
-                ticks: { color: '#B0B5C2' },
-                grid: { color: '#34394F' }
+                ticks: { color: '#94a3b8' },
+                grid: { color: '#334155' }
             }
         }
     };
@@ -318,17 +318,17 @@ const GraphDisplay = ({ content }) => {
         plugins: {
             legend: {
                 position: 'right',
-                labels: { color: '#B0B5C2' }
+                labels: { color: '#94a3b8' }
             }
         }
     };
 
     return (
-        <div className="graphs-container">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
             {charts.slice(0, 4).map((chart, index) => (
-                <div key={index} className="graph-card">
-                    <h4>{chart.title}</h4>
-                    <div className="chart-wrapper">
+                <div key={index} className="bg-slate-800/50 border border-slate-700/50 rounded-xl p-4 shadow-sm backdrop-blur-sm">
+                    <h4 className="text-sm font-semibold text-slate-300 mb-4 text-center">{chart.title}</h4>
+                    <div className="relative w-full aspect-[4/3]">
                         {chart.type === 'bar' && <Bar data={chart.data} options={options} />}
                         {chart.type === 'line' && <Line data={chart.data} options={options} />}
                         {chart.type === 'scatter' && <Scatter data={chart.data} options={scatterOptions} />}

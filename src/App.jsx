@@ -1,6 +1,7 @@
 /**
  * Main App Component
  * Orchestrates the PropGPT frontend application
+ * Updated with Tailwind CSS
  */
 
 import React, { useEffect } from 'react';
@@ -30,9 +31,11 @@ function App() {
     }, [setCacheStats]);
 
     return (
-        <div className="app-container">
+        <div className="flex h-screen w-full bg-slate-900 text-slate-100 overflow-hidden font-sans">
             <Configuration />
-            <ChatInterface />
+            <div className="flex-1 flex flex-col h-full relative min-w-0">
+                <ChatInterface />
+            </div>
         </div>
     );
 }

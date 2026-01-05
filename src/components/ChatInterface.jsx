@@ -1,6 +1,7 @@
 /**
  * ChatInterface Component
  * Main chat interface with message history and input
+ * Updated with Tailwind CSS
  */
 
 import React, { useState, useRef, useEffect } from 'react';
@@ -143,47 +144,71 @@ const ChatInterface = () => {
     };
 
     return (
-        <div className="chat-interface">
-            <div className="chat-header">
+        <div className="flex flex-col h-full bg-slate-900 overflow-hidden">
+            {/* Header */}
+            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-700 bg-slate-900/50 backdrop-blur shrink-0">
                 <div>
-                    <h1>Real Estate Analysis Platform</h1>
-                    <p>Advanced AI-powered comparative analysis of real estate metrics</p>
+                    <h1 className="text-lg font-bold text-white tracking-tight">Real Estate Analysis Platform</h1>
+                    <p className="text-xs text-slate-400">Advanced AI-powered comparative analysis of real estate metrics</p>
                 </div>
                 <button
                     onClick={handleDownloadReport}
-                    className="btn-secondary"
-                    style={{ marginLeft: 'auto' }}
+                    className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-slate-800 text-slate-300 text-xs font-medium border border-slate-700 hover:bg-slate-700 hover:text-white transition-all shadow-sm"
                     title="Download Chat Report"
                 >
-                    Download Report 📥
+                    <span>Download Report</span>
+                    <span role="img" aria-label="download">📥</span>
                 </button>
             </div>
 
-            <div className="chat-messages">
+            {/* Messages Area */}
+            <div className="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar">
+                {messages.length === 0 && (
+                    <div className="h-full flex flex-col items-center justify-center text-slate-500 opacity-60">
+                        <div className="text-6xl mb-4">🏙️</div>
+                        <p className="text-sm">Select items from the sidebar and start asking questions.</p>
+                    </div>
+                )}
                 {messages.map((message, index) => (
-                    <div key={index} className={`message message-${message.role}`}>
-                        <div className="message-content">
+                    <div key={index} className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                        <div className={`
+                            relative max-w-[85%] rounded-2xl p-5 shadow-sm
+                            ${message.role === 'user'
+                                ? 'bg-blue-600 text-white rounded-tr-sm'
+                                : message.role === 'assistant'
+                                    ? 'bg-slate-800 text-slate-200 rounded-tl-sm border border-slate-700/50'
+                                    : 'bg-red-500/10 text-red-400 border border-red-500/20 w-full max-w-lg mx-auto text-center'
+                            }
+                        `}>
                             {message.role === 'error' ? (
-                                <div className="error-message">{message.content}</div>
+                                <div className="text-sm font-medium">{message.content}</div>
                             ) : message.role === 'user' ? (
-                                <p>{message.content}</p>
+                                <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</p>
                             ) : (
                                 <>
                                     {message.metadata?.cached && (
-                                        <div className="cache-badge">⚡ Cache Hit</div>
+                                        <div className="absolute -top-3 right-4 bg-emerald-500/10 text-emerald-400 text-[10px] font-bold px-2 py-0.5 rounded-full border border-emerald-500/20">
+                                            ⚡ Cache Hit
+                                        </div>
                                     )}
-                                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                                        {message.content}
-                                    </ReactMarkdown>
+                                    <div className="prose prose-invert prose-sm max-w-none">
+                                        <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                                            {message.content
+                                                // Convert [Header] to ### Header
+                                                .replace(/^\[(.*?)\]$/gm, '### $1')
+                                                // Ensure newlines after headers if they are sticking to text
+                                                .replace(/### (.*?)\n(?!\n)/g, '### $1\n\n')
+                                            }
+                                        </ReactMarkdown>
+                                    </div>
 
                                     {/* <GraphDisplay content={message.content} /> */}
 
                                     {message.metadata && (
                                         <>
-                                            <div className="message-metadata">
-                                                <small>
-                                                    Input Tokens: {message.metadata.inputTokens || 0} |
-                                                    Output Tokens: {message.metadata.outputTokens || 0}
+                                            <div className="mt-4 pt-3 border-t border-slate-700/50 flex justify-between items-center">
+                                                <small className="text-[10px] text-slate-500 font-mono">
+                                                    Input: {message.metadata.inputTokens || 0} • Output: {message.metadata.outputTokens || 0}
                                                 </small>
                                             </div>
 
@@ -244,16 +269,19 @@ const ChatInterface = () => {
                 ))}
 
                 {loading && (
-                    <div className="message message-assistant">
-                        <div className="message-content">
-                            <div className="loading-indicator">
-                                <span className="dots">Analyzing</span>
-                                {estimatedTime > 0 && (
-                                    <div className="estimated-time">
-                                        <small>Estimated time: ~{countdown}s</small>
-                                    </div>
-                                )}
+                    <div className="flex justify-start">
+                        <div className="bg-slate-800 text-slate-200 rounded-2xl rounded-tl-sm p-4 border border-slate-700/50 shadow-sm flex items-center gap-3">
+                            <div className="flex space-x-1">
+                                <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                                <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                                <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
                             </div>
+                            <span className="text-sm text-slate-400 font-medium">Analyzing...</span>
+                            {estimatedTime > 0 && (
+                                <span className="text-xs text-slate-500 ml-2 border-l border-slate-600 pl-3">
+                                    ~{countdown}s remaining
+                                </span>
+                            )}
                         </div>
                     </div>
                 )}
@@ -261,19 +289,26 @@ const ChatInterface = () => {
                 <div ref={messagesEndRef} />
             </div>
 
-            <form onSubmit={handleSubmit} className="chat-input-form">
-                <input
-                    type="text"
-                    value={inputValue}
-                    onChange={(e) => setInputValue(e.target.value)}
-                    placeholder="Ask a question about the selected items..."
-                    disabled={loading}
-                    className="chat-input"
-                />
-                <button type="submit" disabled={loading} className="btn-primary">
-                    Send
-                </button>
-            </form>
+            {/* Input Area */}
+            <div className="p-4 border-t border-slate-800 bg-slate-900 shrink-0">
+                <form onSubmit={handleSubmit} className="relative max-w-4xl mx-auto">
+                    <input
+                        type="text"
+                        value={inputValue}
+                        onChange={(e) => setInputValue(e.target.value)}
+                        placeholder={loading ? "Analysis in progress..." : "Ask a question about the selected items..."}
+                        disabled={loading}
+                        className="w-full bg-slate-800 text-slate-200 border border-slate-700 rounded-xl px-4 py-3 pr-24 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none shadow-sm placeholder-slate-500 transition-all font-medium"
+                    />
+                    <button
+                        type="submit"
+                        disabled={loading || !inputValue.trim()}
+                        className="absolute right-2 top-1.5 bottom-1.5 bg-blue-600 hover:bg-blue-500 text-white font-medium px-4 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm shadow-sm"
+                    >
+                        Send
+                    </button>
+                </form>
+            </div>
         </div>
     );
 };
