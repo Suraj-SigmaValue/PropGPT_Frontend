@@ -6,7 +6,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
-import { executeQuery, downloadReport } from '../api/endpoints';
+import { executeQuery, downloadBasicReport, generateStructuredReport } from '../api/endpoints';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import FeedbackButtons from './FeedbackButtons';
@@ -30,8 +30,11 @@ const ChatInterface = () => {
     const [inputValue, setInputValue] = useState('');
     const [estimatedTime, setEstimatedTime] = useState(0);
     const [countdown, setCountdown] = useState(0);
+    const [isReportMenuOpen, setIsReportMenuOpen] = useState(false);
+    const [isGeneratingReport, setIsGeneratingReport] = useState(false);
     const messagesEndRef = useRef(null);
     const countdownIntervalRef = useRef(null);
+    const menuRef = useRef(null);
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -40,6 +43,17 @@ const ChatInterface = () => {
     useEffect(() => {
         scrollToBottom();
     }, [messages]);
+
+    // Handle clicks outside the report menu to close it
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (menuRef.current && !menuRef.current.contains(event.target)) {
+                setIsReportMenuOpen(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -118,47 +132,123 @@ const ChatInterface = () => {
         }
     };
 
-    const handleDownloadReport = async () => {
+    const downloadFile = (response, filename) => {
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', filename);
+        document.body.appendChild(link);
+        link.click();
+        link.parentNode.removeChild(link);
+        window.URL.revokeObjectURL(url);
+    };
+
+    const handleDownloadBasicReport = async () => {
+        setIsReportMenuOpen(false);
+        setIsGeneratingReport(true);
         try {
-            const response = await downloadReport();
-
-            // Create a URL for the blob
-            const url = window.URL.createObjectURL(new Blob([response.data]));
-
-            // Create a temporary link to trigger download
-            const link = document.createElement('a');
-            link.href = url;
-            link.setAttribute('download', 'propgpt_chat_report.pdf'); // Set filename
-
-            // Append to body, click, and cleanup
-            document.body.appendChild(link);
-            link.click();
-
-            // Cleanup
-            link.parentNode.removeChild(link);
-            window.URL.revokeObjectURL(url);
+            const response = await downloadBasicReport();
+            downloadFile(response, 'propgpt_basic_report.pdf');
         } catch (error) {
-            console.error('Download error:', error);
-            alert('Failed to download report. Please ensure there is chat history available.');
+            console.error('Basic report download error:', error);
+            alert('Failed to download basic report.');
+        } finally {
+            setIsGeneratingReport(false);
+        }
+    };
+
+    const handleGenerateStructuredReport = async (preset) => {
+        setIsReportMenuOpen(false);
+        setIsGeneratingReport(true);
+
+        let sections = [];
+        if (preset === 'quick') {
+            sections = ['Executive Summary', 'Market Overview', 'Charts & Visuals'];
+        } else if (preset === 'institutional') {
+            sections = ['Executive Summary', 'Market Overview', 'Charts & Visuals', 'Investment Advisory', 'Strategic Synthesis', 'Detailed Intelligence Analysis'];
+        }
+
+        try {
+            const response = await generateStructuredReport({
+                sections,
+                preset
+            });
+            downloadFile(response, `propgpt_${preset}_report.pdf`);
+        } catch (error) {
+            console.error('Structured report generation error:', error);
+            alert('Failed to generate structured report. Ensure you have a relevant chat history.');
+        } finally {
+            setIsGeneratingReport(false);
         }
     };
 
     return (
         <div className="flex flex-col h-full bg-transparent overflow-hidden">
             {/* Header */}
-            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-700 bg-slate-900/40 backdrop-blur-md shrink-0">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-700 bg-slate-900/40 backdrop-blur-md shrink-0 relative z-50">
                 <div>
                     <h1 className="text-lg font-bold text-white tracking-tight">Real Estate Analysis Platform</h1>
                     <p className="text-xs text-slate-400">Advanced AI-powered comparative analysis of real estate metrics</p>
                 </div>
-                <button
-                    onClick={handleDownloadReport}
-                    className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-slate-800 text-slate-300 text-xs font-medium border border-slate-700 hover:bg-slate-700 hover:text-white transition-all shadow-sm"
-                    title="Download Chat Report"
-                >
-                    <span>Download Report</span>
-                    <span role="img" aria-label="download">📥</span>
-                </button>
+                <div className="relative" ref={menuRef}>
+                    <button
+                        onClick={() => setIsReportMenuOpen(!isReportMenuOpen)}
+                        disabled={isGeneratingReport || messages.length === 0}
+                        className={`flex items-center gap-2 px-3 py-1.5 rounded-md transition-all shadow-sm text-xs font-medium border ${isGeneratingReport
+                            ? 'bg-slate-800 text-slate-500 border-slate-700 opacity-70 cursor-not-allowed'
+                            : 'bg-blue-600/20 text-blue-400 border-blue-500/30 hover:bg-blue-600/30 hover:text-blue-300'
+                            }`}
+                        title="Download Analysis Report"
+                    >
+                        {isGeneratingReport ? (
+                            <>
+                                <div className="w-3 h-3 border-2 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
+                                <span>Generating...</span>
+                            </>
+                        ) : (
+                            <>
+                                <span>Download Report</span>
+                                <span className={`transition-transform duration-200 ${isReportMenuOpen ? 'rotate-180' : ''}`}>▼</span>
+                            </>
+                        )}
+                    </button>
+
+                    {/* Report Dropdown Menu */}
+                    {isReportMenuOpen && (
+                        <div className="absolute right-0 mt-2 w-64 bg-slate-800 border border-slate-700 rounded-lg shadow-xl z-50 overflow-hidden backdrop-blur-xl bg-slate-800/90 animate-in fade-in zoom-in duration-200">
+                            <div className="p-2 border-b border-slate-700/50">
+                                <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest px-2">Report Presets</span>
+                            </div>
+                            <div className="p-1">
+                                <button
+                                    onClick={() => handleGenerateStructuredReport('quick')}
+                                    className="w-full text-left px-3 py-2 rounded-md hover:bg-blue-600/10 hover:text-blue-300 transition-colors group"
+                                >
+                                    <div className="font-bold text-sm">⚡ Quick Report</div>
+                                    <div className="text-[10px] text-slate-400 group-hover:text-slate-300">Executive summary & market overview.</div>
+                                </button>
+                                <button
+                                    onClick={() => handleGenerateStructuredReport('institutional')}
+                                    className="w-full text-left px-3 py-2 rounded-md hover:bg-blue-600/10 hover:text-blue-300 transition-colors group"
+                                >
+                                    <div className="font-bold text-sm">🏢 Institutional Grade</div>
+                                    <div className="text-[10px] text-slate-400 group-hover:text-slate-300">Full analysis with investment advisory.</div>
+                                </button>
+                            </div>
+                            <div className="p-2 border-y border-slate-700/50">
+                                <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest px-2">Legacy</span>
+                            </div>
+                            <div className="p-1">
+                                <button
+                                    onClick={handleDownloadBasicReport}
+                                    className="w-full text-left px-3 py-2 rounded-md hover:bg-slate-700 text-slate-300 transition-colors"
+                                >
+                                    <div className="font-semibold text-xs">📄 Basic Chat History</div>
+                                </button>
+                            </div>
+                        </div>
+                    )}
+                </div>
             </div>
 
             {/* Messages Area */}

@@ -6,7 +6,7 @@
 import axios from 'axios';
 
 // Vite uses import.meta.env.VITE_ for environment variables
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://192.168.1.55:8000/api';
 
 // Helper function to get CSRF token from cookies
 function getCookie(name) {
