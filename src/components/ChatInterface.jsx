@@ -10,6 +10,7 @@ import { executeQuery, downloadBasicReport, generateStructuredReport } from '../
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import FeedbackButtons from './FeedbackButtons';
+import DataSourceDisplay from './DataSourceDisplay';
 // import GraphDisplay from './GraphDisplay';
 
 const ChatInterface = () => {
@@ -114,6 +115,7 @@ const ChatInterface = () => {
             addMessage('assistant', data.response_text, {
                 mappingKeys: data.mapping_keys,
                 selectedColumns: data.selected_columns,
+                columnsWithSources: data.columns_with_sources,
                 inputTokens: data.input_tokens,
                 outputTokens: data.output_tokens,
                 cached: data.cached,
@@ -292,6 +294,11 @@ const ChatInterface = () => {
                                         </ReactMarkdown>
                                     </div>
 
+                                    {/* Data Sources Display */}
+                                    {message.metadata?.columnsWithSources && (
+                                        <DataSourceDisplay columnsWithSources={message.metadata.columnsWithSources} />
+                                    )}
+
                                     {/* <GraphDisplay content={message.content} /> */}
 
                                     {message.metadata && (
@@ -336,6 +343,7 @@ const ChatInterface = () => {
                                                             addMessage('assistant', data.response_text, {
                                                                 mappingKeys: data.mapping_keys,
                                                                 selectedColumns: data.selected_columns,
+                                                                columnsWithSources: data.columns_with_sources,
                                                                 inputTokens: data.input_tokens,
                                                                 outputTokens: data.output_tokens,
                                                                 cached: data.cached,

@@ -13,6 +13,8 @@ export const AppProvider = ({ children }) => {
 
     // Configuration state
     const [comparisonType, setComparisonType] = useState('Location');
+    const [selectedCity, setSelectedCity] = useState('Pune'); // City selection
+    const [availableCities, setAvailableCities] = useState(['Pune']); // Can add more cities here
     const [selectedItems, setSelectedItems] = useState([]);
     const [selectedCategories, setSelectedCategories] = useState(['All']);
     const [selectedYears, setSelectedYears] = useState([2020, 2021, 2022, 2023, 2024]);
@@ -48,6 +50,10 @@ export const AppProvider = ({ children }) => {
         // Configuration
         comparisonType,
         setComparisonType,
+        selectedCity,
+        setSelectedCity,
+        availableCities,
+        setAvailableCities,
         selectedItems,
         setSelectedItems,
         selectedCategories,

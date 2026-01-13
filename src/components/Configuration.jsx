@@ -12,6 +12,9 @@ const Configuration = () => {
     const {
         comparisonType,
         setComparisonType,
+        selectedCity,
+        setSelectedCity,
+        availableCities,
         selectedItems,
         setSelectedItems,
         selectedCategories,
@@ -92,7 +95,32 @@ const Configuration = () => {
                 <p className="text-sm text-slate-400 mt-1">Set analysis parameters</p>
             </div>
 
+            {/* City Selection */}
+            <div className="p-6 border-b border-slate-800/50">
+                <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+                    City
+                </label>
+                <select
+                    value={selectedCity}
+                    onChange={(e) => {
+                        setSelectedCity(e.target.value);
+                        setSelectedItems([]);
+                        setSearchTerm('');
+                        clearChat();
+                    }}
+                    className="block w-full rounded-lg border border-slate-700 bg-slate-800/50 backdrop-blur-sm py-2 px-3 text-slate-200 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 sm:text-sm"
+                >
+                    {availableCities.map(city => (
+                        <option key={city} value={city}>{city}</option>
+                    ))}
+                </select>
+                <p className="mt-2 text-xs text-slate-500">
+                    💡 To add more cities, update the <code className="text-blue-400 bg-slate-800 px-1 rounded">availableCities</code> {/*array in AppContext.jsx*/}
+                </p>
+            </div>
+
             {/* Comparison Type */}
+
             <div className="p-6 border-b border-slate-800/50">
                 <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Comparison Type</label>
                 <select
