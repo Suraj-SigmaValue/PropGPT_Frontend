@@ -11,6 +11,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import FeedbackButtons from './FeedbackButtons';
 import DataSourceDisplay from './DataSourceDisplay';
+import sigmaLogo from '../Logo/SigmaValue_logo_white.png';
 
 const ChatInterface = () => {
     const {
@@ -384,14 +385,12 @@ const ChatInterface = () => {
             </div>
 
             {/* Header */}
-            <div className="flex items-center justify-between px-8 py-5 border-b border-slate-800 bg-slate-900/60 backdrop-blur-xl shrink-0 relative z-50 shadow-2xl">
-                <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center shadow-lg shadow-blue-500/20">
-                        <span className="text-xl">📊</span>
-                    </div>
+            <div className="flex items-center justify-between px-4 py-3 md:px-8 md:py-5 border-b border-slate-800 bg-slate-900/60 backdrop-blur-xl shrink-0 relative z-50 shadow-2xl">
+                <div className="flex items-center gap-3 md:gap-4">
+                    <img src={sigmaLogo} alt="SigmaValue" className="h-10 md:h-16 w-auto object-contain opacity-90 hover:opacity-100 transition-opacity" />
                     <div>
-                        <h1 className="text-xl font-black text-white tracking-tight uppercase italic leading-none">PropGPT <span className="text-blue-500">v3.0</span></h1>
-                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-[0.2em] mt-1">Intelligence Layer • Real Estate</p>
+                        <h1 className="text-lg md:text-xl font-black text-white tracking-tight uppercase italic leading-none">PropGPT <span className="text-blue-500">v3.0</span></h1>
+                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-[0.2em] mt-1 hidden md:block">Intelligence Layer • Real Estate</p>
                     </div>
                 </div>
                 <div className="flex items-center gap-4" ref={menuRef}>
